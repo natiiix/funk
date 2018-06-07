@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Funk
 {
@@ -35,7 +36,10 @@ namespace Funk
                 }
             }
 
-            // TODO
+            // Tokenize all the source code
+            IEnumerable<Token> tokens = sourceFiles.SelectMany(x => Lexer.Tokenize(x)).ToList();
+
+            // TODO: Parse AST and execute the program
         }
 
         public static void ExitWithError(string errorMessage, int errorCode = -1)
