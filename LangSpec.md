@@ -6,7 +6,7 @@ May be subject to change in the future.
 ## Function Definition
 
 ```
-(function <FunctionName> [Parameters] : <Expression>)
+(function <FunctionName> ([Parameters]) <Expression>)
 ```
 
 ## Expression / Function Call
