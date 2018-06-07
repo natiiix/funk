@@ -37,9 +37,19 @@ namespace Funk
             }
 
             // Tokenize all the source code
-            IEnumerable<Token> tokens = sourceFiles.SelectMany(x => Lexer.Tokenize(x)).ToList();
+            IEnumerable<Token> tokens = sourceFiles.SelectMany(x => Lexer.Tokenize(x));
 
-            // TODO: Parse AST and execute the program
+            // No tokens
+            // All source files are empty
+            if (tokens.Count() == 0)
+            {
+                ExitWithError("No source code provided (all source files are empty)");
+            }
+
+            // Parse the AST
+            AbstractSyntaxTree ast = Parser.ParseAST(tokens);
+
+            // TODO: Execute the program
         }
 
         public static void ExitWithError(string errorMessage, int errorCode = -1)
