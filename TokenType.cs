@@ -5,7 +5,6 @@ namespace Funk
         Symbol,
         Number,
         OpenParenthesis,
-        CloseParenthesis,
-        Colon
+        CloseParenthesis
     }
 }
