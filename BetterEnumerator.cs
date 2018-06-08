@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,6 +9,23 @@ namespace Funk
         private readonly IEnumerable<T> enumerable;
         private readonly int count;
         private int index;
+
+        public int Index
+        {
+            get => index;
+
+            set
+            {
+                if (value >= 0 && value < count)
+                {
+                    index = value;
+                }
+                else
+                {
+                    throw new IndexOutOfRangeException();
+                }
+            }
+        }
 
         public bool PreviousAvailable { get => index - 1 >= 0; }
         public T Previous { get => enumerable.ElementAt(index - 1); }
@@ -22,6 +40,12 @@ namespace Funk
         {
             this.enumerable = enumerable;
             count = enumerable.Count();
+
+            if (count == 0)
+            {
+                throw new ArgumentException("Enumerable must not be empty");
+            }
+
             Reset();
         }
 
