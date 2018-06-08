@@ -49,7 +49,9 @@ namespace Funk
             // Parse the AST
             AbstractSyntaxTree ast = Parser.ParseAST(tokens);
 
-            // TODO: Execute the program
+            // Execute the program based on the parsed AST
+            Interpreter inter = new Interpreter(ast);
+            inter.Run();
         }
 
         public static void ExitWithError(string errorMessage, int errorCode = -1)
