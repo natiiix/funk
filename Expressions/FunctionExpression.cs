@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Funk.Expressions
 {
@@ -57,7 +56,7 @@ namespace Funk.Expressions
                 }
 
                 // Parse body expression
-                if (Parser.TryParseExpression(tokens.GetRange(i, tokens.Count - i), out IExpression expr))
+                if (Parser.TryParseExpression(tokens.GetRange(i, tokens.Count - i - 1), out IExpression expr))
                 {
                     result = new FunctionExpression(tokens[2].Value, args, expr);
                     return true;

@@ -15,6 +15,8 @@ namespace Funk.Expressions
 
         public static bool TryParse(List<Token> tokens, out NumberExpression result)
         {
+            // <Value>
+            // ^
             if (tokens.Count == 1 &&
                 tokens[0].Type == TokenType.Number &&
                 int.TryParse(tokens[0].Value, out int value))
