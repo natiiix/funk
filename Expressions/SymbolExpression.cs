@@ -27,5 +27,7 @@ namespace Funk.Expressions
                 return false;
             }
         }
+
+        public override string ToString() => $"SymbolExpression({Symbol})";
     }
 }

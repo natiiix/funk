@@ -28,5 +28,7 @@ namespace Funk.Expressions
                 return false;
             }
         }
+
+        public override string ToString() => $"NumberExpression({Value})";
     }
 }

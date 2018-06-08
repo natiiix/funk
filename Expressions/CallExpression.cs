@@ -73,5 +73,7 @@ namespace Funk.Expressions
             result = null;
             return false;
         }
+
+        public override string ToString() => $"CallExpression({FunctionName} ({string.Join(", ", Arguments)}))";
     }
 }

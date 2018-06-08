@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Funk.Expressions
 {
@@ -66,5 +67,7 @@ namespace Funk.Expressions
             result = null;
             return false;
         }
+
+        public override string ToString() => $"FunctionExpression({FunctionName} ({string.Join(", ", Arguments)}) {Body})";
     }
 }
