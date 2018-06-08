@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Funk.Expressions;
 
 using TokenEnum = Funk.BetterEnumerator<Funk.Token>;
@@ -23,6 +24,13 @@ namespace Funk
 
         public static List<IExpression> ParseExpressions(IEnumerable<Token> tokens)
         {
+            // Empty token list
+            // Return an empty expression list
+            if (tokens.Count() == 0)
+            {
+                return new List<IExpression>();
+            }
+
             List<IExpression> exprs = new List<IExpression>();
             TokenEnum tokenEnum = new TokenEnum(tokens);
 
