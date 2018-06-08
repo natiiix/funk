@@ -9,30 +9,33 @@ namespace Funk
     {
         public static AbstractSyntaxTree ParseAST(IEnumerable<Token> tokens)
         {
-            AbstractSyntaxTree ast = new AbstractSyntaxTree();
+            try
+            {
+                // Parse an abstract syntax tree
+                return new AbstractSyntaxTree(ParseExpressions(tokens));
+            }
+            catch (UnexpectedTokenException e)
+            {
+                Program.ExitWithError(e.Message);
+                return null;
+            }
+        }
+
+        public static List<IExpression> ParseExpressions(IEnumerable<Token> tokens)
+        {
+            List<IExpression> exprs = new List<IExpression>();
             TokenEnum tokenEnum = new TokenEnum(tokens);
 
-            // Parse all the top level expressions
             do
             {
-                // Top level expressions must always begin with an open parenthesis
-                if (tokenEnum.Current.Type == TokenType.OpenParenthesis)
-                {
-                    ast.TopLevelExpressions.Add(ParseExpression(tokenEnum));
-                }
-                else
-                {
-                    ExitUnexpectedToken(tokenEnum.Current);
-                }
+                exprs.Add(ParseNextExpression(tokenEnum));
             }
             while (tokenEnum.MoveNext());
 
-            return ast;
+            return exprs;
         }
 
-        private static void ExitUnexpectedToken(Token token) => Program.ExitWithError($"Unexpected token: \"{token}\"");
-
-        private static IExpression ParseExpression(TokenEnum tokenEnum)
+        public static IExpression ParseNextExpression(TokenEnum tokenEnum)
         {
             List<Token> tokenBuffer = new List<Token>();
 
@@ -53,15 +56,32 @@ namespace Funk
             return null;
         }
 
-        private static bool TryParseExpression(List<Token> tokens, out IExpression result)
+        public static bool TryParseExpression(List<Token> tokens, out IExpression result)
         {
             // Number
-            if (NumberExpression.TryParse(tokens, out NumberExpression expr))
+            if (NumberExpression.TryParse(tokens, out NumberExpression numExpr))
             {
-                result = expr;
+                result = numExpr;
                 return true;
             }
-            // TODO: Other expression types
+            // Symbol
+            else if (SymbolExpression.TryParse(tokens, out SymbolExpression symExpr))
+            {
+                result = symExpr;
+                return true;
+            }
+            // Function call
+            else if (CallExpression.TryParse(tokens, out CallExpression callExpr))
+            {
+                result = callExpr;
+                return true;
+            }
+            // Function definition
+            else if (FunctionExpression.TryParse(tokens, out FunctionExpression funcExpr))
+            {
+                result = funcExpr;
+                return true;
+            }
 
             result = null;
             return false;

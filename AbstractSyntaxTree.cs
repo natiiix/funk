@@ -7,9 +7,9 @@ namespace Funk
     {
         public List<IExpression> TopLevelExpressions { get; private set; }
 
-        public AbstractSyntaxTree()
+        public AbstractSyntaxTree(List<IExpression> topLevelExprs)
         {
-            TopLevelExpressions = new List<IExpression>();
+            TopLevelExpressions = topLevelExprs;
         }
     }
 }

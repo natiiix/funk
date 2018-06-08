@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Funk.Expressions
 {
     public class SymbolExpression : IExpression
@@ -10,5 +12,20 @@ namespace Funk.Expressions
         }
 
         public IExpression Evaluate() => throw new System.NotImplementedException();
+
+        public static bool TryParse(List<Token> tokens, out SymbolExpression result)
+        {
+            if (tokens.Count == 1 &&
+                tokens[0].Type == TokenType.Symbol)
+            {
+                result = new SymbolExpression(tokens[0].Value);
+                return true;
+            }
+            else
+            {
+                result = null;
+                return false;
+            }
+        }
     }
 }
