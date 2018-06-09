@@ -11,7 +11,7 @@ namespace Funk.Expressions
             Symbol = symbol;
         }
 
-        public IExpression Evaluate(InterpreterEnvironment env) => throw new System.NotImplementedException();
+        public IExpression Evaluate(InterpreterEnvironment env) => env.FindSymbol(Symbol);
 
         public static bool TryParse(List<Token> tokens, out SymbolExpression result)
         {
