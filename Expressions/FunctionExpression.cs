@@ -16,12 +16,6 @@ namespace Funk.Expressions
             Body = body;
         }
 
-        public override IExpression Evaluate(InterpreterEnvironment env)
-        {
-            env.Symbols[Name] = this;
-            return this;
-        }
-
         public static bool TryParse(List<Token> tokens, out FunctionExpression result)
         {
             // (function <FunctionName> ([Arguments]) <Expression>)
@@ -97,6 +91,15 @@ namespace Funk.Expressions
             {
                 return Body.Evaluate(env);
             }
+        }
+
+        public override IExpression Evaluate(InterpreterEnvironment env)
+        {
+            // Register the function as a symbol in the currect environment
+            env.Symbols[Name] = this;
+
+            // Perform the default behavior
+            return base.Evaluate(env);
         }
     }
 }
