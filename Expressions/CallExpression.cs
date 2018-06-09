@@ -1,15 +1,17 @@
 using System.Collections.Generic;
 
+using TokenEnum = Funk.BetterEnumerator<Funk.Token>;
+
 namespace Funk.Expressions
 {
     public class CallExpression : IExpression
     {
-        public string FunctionName { get; private set; }
+        public IExpression Function { get; private set; }
         public List<IExpression> Arguments { get; private set; }
 
-        public CallExpression(string functionName, List<IExpression> arguments)
+        public CallExpression(IExpression function, List<IExpression> arguments)
         {
-            FunctionName = functionName;
+            Function = function;
             Arguments = arguments;
         }
 
@@ -17,21 +19,19 @@ namespace Funk.Expressions
 
         public static bool TryParse(List<Token> tokens, out CallExpression result)
         {
-            // (FunctionName [Arguments])
-            // ^^                       ^
+            // (<Function Expression> [Arguments])
+            // ^^                                ^
             if (tokens.Count >= 3 &&
                 tokens[0].Type == TokenType.OpenParenthesis &&
-                tokens[1].Type == TokenType.Symbol &&
                 tokens[tokens.Count - 1].Type == TokenType.CloseParenthesis)
             {
-                // List of tokens to be converted into argument expressions
-                List<Token> argsTokens = tokens.GetRange(2, tokens.Count - 3);
+                List<Token> innerTokens = tokens.GetRange(1, tokens.Count - 2);
+                TokenEnum tokenEnum = new TokenEnum(innerTokens);
 
-                // Try to parse a list of expressions to be passed
-                // to the function as arguments from the tokens
-                if (Parser.TryParseExpressions(argsTokens, out List<IExpression> args))
+                // Try to parse at least one valid expression from the inner tokens
+                if (Parser.TryParseExpressions(innerTokens, out List<IExpression> innerExprs) && innerExprs.Count > 0)
                 {
-                    result = new CallExpression(tokens[1].Value, args);
+                    result = new CallExpression(innerExprs[0], innerExprs.GetRange(1, innerExprs.Count - 1));
                     return true;
                 }
             }
@@ -40,6 +40,6 @@ namespace Funk.Expressions
             return false;
         }
 
-        public override string ToString() => $"CallExpression({FunctionName} ({string.Join(", ", Arguments)}))";
+        public override string ToString() => $"CallExpression({Function} ({string.Join(", ", Arguments)}))";
     }
 }
