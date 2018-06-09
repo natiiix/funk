@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Funk.Expressions
 {
-    public class FunctionExpression : IExpression, IFunction
+    public class FunctionExpression : Function
     {
         public string Name { get; private set; }
         public IEnumerable<string> Arguments { get; private set; }
@@ -16,7 +16,7 @@ namespace Funk.Expressions
             Body = body;
         }
 
-        public IExpression Evaluate(InterpreterEnvironment env)
+        public override IExpression Evaluate(InterpreterEnvironment env)
         {
             env.Symbols[Name] = this;
             return this;
@@ -74,7 +74,7 @@ namespace Funk.Expressions
 
         public override string ToString() => $"FunctionExpression({Name} ({string.Join(", ", Arguments)}) {Body})";
 
-        public IExpression Call(InterpreterEnvironment env, IEnumerable<IExpression> args)
+        public override IExpression Call(InterpreterEnvironment env, IEnumerable<IExpression> args)
         {
             if (args.Count() != Arguments.Count())
             {

@@ -17,7 +17,7 @@ namespace Funk.Expressions
 
         public IExpression Evaluate(InterpreterEnvironment env)
         {
-            FunctionExpression evaluatedFunc = Function.Evaluate(env) as FunctionExpression;
+            Function evaluatedFunc = Function.Evaluate(env) as Function;
 
             if (evaluatedFunc == null)
             {
