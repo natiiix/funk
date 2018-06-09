@@ -15,7 +15,17 @@ namespace Funk.Expressions
             Arguments = arguments;
         }
 
-        public IExpression Evaluate(InterpreterEnvironment env) => throw new System.NotImplementedException();
+        public IExpression Evaluate(InterpreterEnvironment env)
+        {
+            FunctionExpression evaluatedFunc = Function.Evaluate(env) as FunctionExpression;
+
+            if (evaluatedFunc == null)
+            {
+                throw new FatalException($"Unexpected function call syntax (\"{Function}\" does not evaluate to a function)");
+            }
+
+            return evaluatedFunc.Call(env, Arguments);
+        }
 
         public static bool TryParse(List<Token> tokens, out CallExpression result)
         {
