@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Funk.Expressions
 {
-    public class FunctionExpression : IExpression
+    public class FunctionExpression : IExpression, IFunction
     {
         public string Name { get; private set; }
         public IEnumerable<string> Arguments { get; private set; }
@@ -15,7 +16,11 @@ namespace Funk.Expressions
             Body = body;
         }
 
-        public IExpression Evaluate(InterpreterEnvironment env) => this;
+        public IExpression Evaluate(InterpreterEnvironment env)
+        {
+            env.Symbols[Name] = this;
+            return this;
+        }
 
         public static bool TryParse(List<Token> tokens, out FunctionExpression result)
         {
@@ -68,5 +73,30 @@ namespace Funk.Expressions
         }
 
         public override string ToString() => $"FunctionExpression({Name} ({string.Join(", ", Arguments)}) {Body})";
+
+        public IExpression Call(InterpreterEnvironment env, IEnumerable<IExpression> args)
+        {
+            if (args.Count() != Arguments.Count())
+            {
+                throw new FatalException($"Unexpected number of arguments provided to function \"{Name}\" (Expected: {Arguments.Count()}, Received: {args.Count()})");
+            }
+
+            if (Body is CallExpression)
+            {
+                InterpreterEnvironment innerEnv = new InterpreterEnvironment(env);
+
+                int argCount = args.Count();
+                for (int i = 0; i < argCount; i++)
+                {
+                    innerEnv.Symbols[Arguments.ElementAt(i)] = args.ElementAt(i);
+                }
+
+                return Body.Evaluate(innerEnv);
+            }
+            else
+            {
+                return Body.Evaluate(env);
+            }
+        }
     }
 }
