@@ -15,7 +15,7 @@ namespace Funk.Expressions
             Body = body;
         }
 
-        public IExpression Evaluate(InterpreterEnvironment env) => throw new System.NotImplementedException();
+        public IExpression Evaluate(InterpreterEnvironment env) => this;
 
         public static bool TryParse(List<Token> tokens, out FunctionExpression result)
         {
