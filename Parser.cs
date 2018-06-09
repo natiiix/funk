@@ -95,16 +95,16 @@ namespace Funk
                 result = symExpr;
                 return true;
             }
-            // Function call
-            else if (CallExpression.TryParse(tokens, out CallExpression callExpr))
-            {
-                result = callExpr;
-                return true;
-            }
             // Function definition
             else if (FunctionExpression.TryParse(tokens, out FunctionExpression funcExpr))
             {
                 result = funcExpr;
+                return true;
+            }
+            // Function call
+            else if (CallExpression.TryParse(tokens, out CallExpression callExpr))
+            {
+                result = callExpr;
                 return true;
             }
 
