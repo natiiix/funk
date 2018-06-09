@@ -72,7 +72,7 @@ namespace Funk.Expressions
         {
             if (args.Count() != Arguments.Count())
             {
-                throw new FatalException($"Unexpected number of arguments provided to function \"{Name}\" (Expected: {Arguments.Count()}, Received: {args.Count()})");
+                throw new UnexpectedNumberOfArgumentsException(Name, Arguments.Count(), args.Count());
             }
 
             if (Body is CallExpression)
