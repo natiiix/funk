@@ -17,10 +17,25 @@ namespace Funk
                 Environment.Exit(0);
             }
 
+            // Try to process the source code files
+            try
+            {
+                ProcessFiles(args);
+            }
+            // If anything goes wrong print the error
+            catch (FatalException e)
+            {
+                Console.Error.WriteLine("FATAL ERROR: " + e.Message);
+                Environment.Exit(-1);
+            }
+        }
+
+        private static void ProcessFiles(string[] filePaths)
+        {
             // Load all the source files
             List<string> sourceFiles = new List<string>();
 
-            foreach (string filePath in args)
+            foreach (string filePath in filePaths)
             {
                 // File exists
                 // Read it
@@ -32,7 +47,7 @@ namespace Funk
                 // Print an error and stop execution
                 else
                 {
-                    ExitWithError($"Source file \"{filePath}\" does not exist");
+                    throw new FatalException($"Source file \"{filePath}\" does not exist");
                 }
             }
 
@@ -43,7 +58,7 @@ namespace Funk
             // All source files are empty
             if (tokens.Count() == 0)
             {
-                ExitWithError("No source code provided (all source files are empty)");
+                throw new FatalException("No source code provided (all source files are empty)");
             }
 
             // Parse the AST
@@ -52,12 +67,6 @@ namespace Funk
             // Execute the program based on the parsed AST
             Interpreter inter = new Interpreter(ast);
             inter.Run();
-        }
-
-        public static void ExitWithError(string errorMessage, int errorCode = -1)
-        {
-            Console.Error.WriteLine("ERROR: " + errorMessage);
-            Environment.Exit(-1);
         }
     }
 }

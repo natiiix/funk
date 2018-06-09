@@ -49,7 +49,7 @@ namespace Funk
                 // Invalid character
                 else
                 {
-                    throw new Exception($"Unexpected character: \"{c}\"");
+                    throw new FatalException($"Unexpected character: \"{c}\"");
                 }
             }
             while (codeEnum.MoveNext());

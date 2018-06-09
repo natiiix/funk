@@ -18,8 +18,7 @@ namespace Funk
             // Unable to parse the AST due to invalid syntax
             else
             {
-                Program.ExitWithError("Invalid syntax");
-                return null;
+                throw new FatalException("Invalid syntax");
             }
         }
 

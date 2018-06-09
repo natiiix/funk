@@ -2,6 +2,6 @@ namespace Funk.Expressions
 {
     public interface IExpression
     {
-        IExpression Evaluate();
+        IExpression Evaluate(InterpreterEnvironment env);
     }
 }
