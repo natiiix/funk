@@ -4,13 +4,13 @@ namespace Funk.Expressions
 {
     public class FunctionExpression : IExpression
     {
-        public string FunctionName { get; private set; }
+        public string Name { get; private set; }
         public IEnumerable<string> Arguments { get; private set; }
         public IExpression Body { get; private set; }
 
-        public FunctionExpression(string functionName, IEnumerable<string> arguments, IExpression body)
+        public FunctionExpression(string name, IEnumerable<string> arguments, IExpression body)
         {
-            FunctionName = functionName;
+            Name = name;
             Arguments = arguments;
             Body = body;
         }
@@ -67,6 +67,6 @@ namespace Funk.Expressions
             return false;
         }
 
-        public override string ToString() => $"FunctionExpression({FunctionName} ({string.Join(", ", Arguments)}) {Body})";
+        public override string ToString() => $"FunctionExpression({Name} ({string.Join(", ", Arguments)}) {Body})";
     }
 }
