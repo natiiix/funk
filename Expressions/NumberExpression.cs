@@ -11,7 +11,7 @@ namespace Funk.Expressions
             Value = value;
         }
 
-        public IExpression Evaluate() => this;
+        public IExpression Evaluate(InterpreterEnvironment env) => this;
 
         public static bool TryParse(List<Token> tokens, out NumberExpression result)
         {

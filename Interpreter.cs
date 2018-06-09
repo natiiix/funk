@@ -18,7 +18,7 @@ namespace Funk
         {
             foreach (IExpression expr in ast.TopLevelExpressions)
             {
-                IExpression value = expr.Evaluate();
+                IExpression value = expr.Evaluate(rootEnv);
                 Console.WriteLine(value);
             }
         }
