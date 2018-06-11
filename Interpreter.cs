@@ -201,6 +201,15 @@ namespace Funk
             });
             #endregion
 
+            #region batch
+            rootEnv.Symbols["batch"] = new BuiltInFunction((env, args) =>
+            {
+                // Return the last evaluated expression passed to the function
+                // or void expression is no argument was provided
+                return args.LastOrDefault() ?? new VoidExpression();
+            });
+            #endregion
+
             #region if
             rootEnv.Symbols["if"] = new BuiltInFunction((env, args) =>
             {
@@ -222,7 +231,7 @@ namespace Funk
                     }
 
                     // If the conditional evaluates to a truthy numeric value
-                    if (condition.Value != 0)
+                    if (condition.BooleanValue)
                     {
                         // Return the expression supplied as the next argument
                         return args.ElementAt(baseIdx + 1);
@@ -242,19 +251,35 @@ namespace Funk
             });
             #endregion
 
-            #region batch
-            rootEnv.Symbols["batch"] = new BuiltInFunction((env, args) =>
+            #region equals
+            rootEnv.Symbols["equals"] = new BuiltInFunction((env, args) =>
             {
                 int argCount = args.Count();
 
-                // No arguments provided to the function
+                // No expressions provided to compare
                 if (argCount < 1)
                 {
-                    throw new UnexpectedNumberOfArgumentsException("batch", ">= 1", argCount);
+                    throw new UnexpectedNumberOfArgumentsException("equals", ">= 1", argCount);
                 }
 
-                // Return the last evaluated expression passed to the function
-                return args.Last();
+                // Convert all arguments to number expression
+                IEnumerable<NumberExpression> numArgs = args.Select(x => x as NumberExpression);
+
+                // If any of the arguments cannot be converted to a number
+                if (numArgs.Any(x => x == null))
+                {
+                    throw new UnexpectedArgumentTypeException("equals");
+                }
+
+                // Get the first expression
+                int first = numArgs.First().Value;
+
+                // Check if all expressions passed to the function have a value
+                // equal to the value of the first expression
+                bool result = numArgs.All(x => x.Value == first);
+
+                // Convert the boolean result to a number expression and return it
+                return new NumberExpression(result);
             });
             #endregion
         }
