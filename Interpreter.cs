@@ -275,15 +275,30 @@ namespace Funk
             });
             #endregion
 
-            #region equals
-            rootEnv.Symbols["equals"] = new BuiltInFunction((env, args) =>
+            // Comparison functions are always performed on two consecutive expressions
+            // This can yield unexpected (e.g., when calling not_equal with more than two arguments)
+            // Example: (not_equal 1 0 1) evaluates to true because no two consecutive expressions are equal
+            AddComparisonFunction("equal", (a, b) => a == b);
+            AddComparisonFunction("not_equal", (a, b) => a != b);
+            AddComparisonFunction("greater", (a, b) => a > b);
+            AddComparisonFunction("greater_or_equal", (a, b) => a >= b);
+            AddComparisonFunction("less", (a, b) => a < b);
+            AddComparisonFunction("less_or_equal", (a, b) => a <= b);
+        }
+
+        private delegate bool ComparisonFunction(int first, int second);
+
+        private void AddComparisonFunction(string name, ComparisonFunction compFunc)
+        {
+            // Register the built-in function as a symbol in the root environment
+            rootEnv.Symbols[name] = new BuiltInFunction((env, args) =>
             {
                 int argCount = args.Count();
 
-                // No expressions provided to compare
-                if (argCount < 1)
+                // Comparison functions require at least two arguments
+                if (argCount < 2)
                 {
-                    throw new UnexpectedNumberOfArgumentsException("equals", ">= 1", argCount);
+                    throw new UnexpectedNumberOfArgumentsException(name, ">= 2", argCount);
                 }
 
                 // Convert all arguments to number expression
@@ -292,20 +307,32 @@ namespace Funk
                 // If any of the arguments cannot be converted to a number
                 if (numArgs.Any(x => x == null))
                 {
-                    throw new UnexpectedArgumentTypeException("equals");
+                    throw new UnexpectedArgumentTypeException(name);
                 }
 
+                // Convert the number expressions to integers
+                IEnumerable<int> intArgs = numArgs.Select(x => x.Value);
+
                 // Get the first expression
-                int first = numArgs.First().Value;
+                int previous = intArgs.First();
 
-                // Check if all expressions passed to the function have a value
-                // equal to the value of the first expression
-                bool result = numArgs.All(x => x.Value == first);
+                // Check if the comparison function applies to all of the values
+                // Every value is compared to the value before it
+                foreach (int val in intArgs.Skip(1))
+                {
+                    if (compFunc(previous, val))
+                    {
+                        previous = val;
+                    }
+                    else
+                    {
+                        return new NumberExpression(false);
+                    }
+                }
 
-                // Convert the boolean result to a number expression and return it
-                return new NumberExpression(result);
+                // All of the values have passed the comparison test
+                return new NumberExpression(true);
             });
-            #endregion
         }
     }
 }
