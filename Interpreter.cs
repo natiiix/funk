@@ -200,6 +200,47 @@ namespace Funk
                 return new VoidExpression();
             });
             #endregion
+
+            #region if
+            rootEnv.Symbols["if"] = new BuiltInFunction((env, args) =>
+            {
+                int argCount = args.Count();
+
+                // Iterate through conditions
+                for (int i = 0, nConditions = argCount / 2; i < nConditions; i++)
+                {
+                    // Get base index for this condition
+                    int baseIdx = i * 2;
+
+                    // Try to convert the condition expression to a numeric value
+                    NumberExpression condition = args.ElementAt(baseIdx) as NumberExpression;
+
+                    // Unable to convert the condition to a number expression
+                    if (condition == null)
+                    {
+                        throw new UnexpectedArgumentTypeException("if");
+                    }
+
+                    // If the conditional evaluates to a truthy numeric value
+                    if (condition.Value != 0)
+                    {
+                        // Return the expression supplied as the next argument
+                        return args.ElementAt(baseIdx + 1);
+                    }
+                }
+
+                // Final else statement
+                if (argCount % 2 == 1)
+                {
+                    return args.ElementAt(argCount - 1);
+                }
+                // No condition met
+                else
+                {
+                    return new VoidExpression();
+                }
+            });
+            #endregion
         }
     }
 }
