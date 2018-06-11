@@ -251,6 +251,30 @@ namespace Funk
             });
             #endregion
 
+            #region not
+            rootEnv.Symbols["not"] = new BuiltInFunction((env, args) =>
+            {
+                int argCount = args.Count();
+
+                // The function must be applied to a single number expression
+                if (argCount != 1)
+                {
+                    throw new UnexpectedNumberOfArgumentsException("not", 1, argCount);
+                }
+
+                NumberExpression numExpr = args.ElementAt(0) as NumberExpression;
+
+                // Invalid expression type
+                if (numExpr == null)
+                {
+                    throw new UnexpectedArgumentTypeException("not");
+                }
+
+                // Invert the boolean value of the number expression and return it
+                return new NumberExpression(!numExpr.BooleanValue);
+            });
+            #endregion
+
             #region equals
             rootEnv.Symbols["equals"] = new BuiltInFunction((env, args) =>
             {
