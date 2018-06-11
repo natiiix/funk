@@ -29,7 +29,7 @@ namespace Funk
                 // Symbol
                 else if (char.IsLetter(c) || c == '_')
                 {
-                    tokens.Add(new Token(TokenType.Symbol, ReadWhile(codeEnum, x => char.IsLetterOrDigit(x) || c == '_')));
+                    tokens.Add(new Token(TokenType.Symbol, ReadWhile(codeEnum, x => char.IsLetterOrDigit(x) || x == '_')));
                 }
                 // Number
                 else if (char.IsDigit(c) || c == '-')
