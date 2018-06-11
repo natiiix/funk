@@ -276,7 +276,7 @@ namespace Funk
             #endregion
 
             // Comparison functions are always performed on two consecutive expressions
-            // This can yield unexpected (e.g., when calling not_equal with more than two arguments)
+            // This can yield unexpected results (e.g., when calling not_equal with more than two arguments)
             // Example: (not_equal 1 0 1) evaluates to true because no two consecutive expressions are equal
             AddComparisonFunction("equal", (a, b) => a == b);
             AddComparisonFunction("not_equal", (a, b) => a != b);
@@ -284,6 +284,11 @@ namespace Funk
             AddComparisonFunction("greater_or_equal", (a, b) => a >= b);
             AddComparisonFunction("less", (a, b) => a < b);
             AddComparisonFunction("less_or_equal", (a, b) => a <= b);
+
+            // Logical boolean functions
+            AddBooleanFunction("and", (nTrue, nTotal) => nTrue == nTotal);
+            AddBooleanFunction("or", (nTrue, nTotal) => nTrue > 0);
+            AddBooleanFunction("xor", (nTrue, nTotal) => nTrue == 1);
         }
 
         private delegate bool ComparisonFunction(int first, int second);
@@ -332,6 +337,32 @@ namespace Funk
 
                 // All of the values have passed the comparison test
                 return new NumberExpression(true);
+            });
+        }
+
+        private delegate bool BooleanEvaluationFunction(int numberOfTrue, int totalNumberOfArgs);
+
+        private void AddBooleanFunction(string name, BooleanEvaluationFunction boolEval)
+        {
+            // Register the built-in function as a symbol in the root environment
+            rootEnv.Symbols[name] = new BuiltInFunction((env, args) =>
+            {
+                // Convert all arguments to number expression
+                IEnumerable<NumberExpression> numArgs = args.Select(x => x as NumberExpression);
+
+                // If any of the arguments cannot be converted to a number expression
+                if (numArgs.Any(x => x == null))
+                {
+                    throw new UnexpectedArgumentTypeException(name);
+                }
+
+                // Count the number expressions that evaluate to true
+                int trueCount = numArgs.Count(x => x.BooleanValue);
+
+                // Evaluate the number of true values
+                bool result = boolEval(trueCount, args.Count());
+
+                return new NumberExpression(result);
             });
         }
     }
