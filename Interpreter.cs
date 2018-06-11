@@ -241,6 +241,22 @@ namespace Funk
                 }
             });
             #endregion
+
+            #region batch
+            rootEnv.Symbols["batch"] = new BuiltInFunction((env, args) =>
+            {
+                int argCount = args.Count();
+
+                // No arguments provided to the function
+                if (argCount < 1)
+                {
+                    throw new UnexpectedNumberOfArgumentsException("batch", ">= 1", argCount);
+                }
+
+                // Return the last evaluated expression passed to the function
+                return args.Last();
+            });
+            #endregion
         }
     }
 }
