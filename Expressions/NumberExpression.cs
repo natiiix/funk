@@ -6,10 +6,11 @@ namespace Funk.Expressions
     {
         public int Value { get; private set; }
 
-        public NumberExpression(int value)
-        {
-            Value = value;
-        }
+        public bool BooleanValue { get => Value != 0; private set => Value = value ? 1 : 0; }
+
+        public NumberExpression(int value) => Value = value;
+
+        public NumberExpression(bool booleanValue) => BooleanValue = booleanValue;
 
         public IExpression Evaluate(InterpreterEnvironment env) => this;
 
