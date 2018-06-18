@@ -1,0 +1,8 @@
+(function FindDivisible (value by)
+    (if
+        (mod value by) (FindDivisible (add value 1) by)
+        (print value)
+    )
+)
+
+(FindDivisible 1000 24)

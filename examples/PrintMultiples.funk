@@ -1,0 +1,13 @@
+(function PrintMultiples (n start max)
+    (batch
+        (if
+            (not (mod start n)) (print start)
+        )
+
+        (if
+            (less_or_equal start max) (PrintMultiples n (add start 1) max)
+        )
+    )
+)
+
+(PrintMultiples 5 1 20)
