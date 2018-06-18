@@ -26,11 +26,19 @@ namespace Funk.Expressions
                 throw new FatalException($"Unexpected function call syntax (\"{Function}\" does not evaluate to a function)");
             }
 
-            // Evaluate the function call arguments
-            IEnumerable<IExpression> evaluatedArgs = Arguments.Select(x => x.Evaluate(env));
+            if (evaluatedFunc is BuiltInFunction)
+            {
+                // Call the evaluated function with the unevaluated arguments
+                return evaluatedFunc.Call(env, Arguments);
+            }
+            else
+            {
+                // Evaluate the function arguments
+                IEnumerable<IExpression> evalArgs = Arguments.Select(x => x.Evaluate(env));
 
-            // Call the evaluated function with the evaluated arguments
-            return evaluatedFunc.Call(env, evaluatedArgs);
+                // Call the evaluated function with the evaluated arguments
+                return evaluatedFunc.Call(env, evalArgs);
+            }
         }
 
         public static bool TryParse(List<Token> tokens, out CallExpression result)

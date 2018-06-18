@@ -70,11 +70,13 @@ namespace Funk.Expressions
 
         public override IExpression Call(InterpreterEnvironment env, IEnumerable<IExpression> args)
         {
+            // Unexpected number of arguments
             if (args.Count() != Arguments.Count())
             {
                 throw new UnexpectedNumberOfArgumentsException(Name, Arguments.Count(), args.Count());
             }
 
+            // The body expression is a function call expression
             if (Body is CallExpression)
             {
                 InterpreterEnvironment innerEnv = new InterpreterEnvironment(env);
@@ -87,6 +89,7 @@ namespace Funk.Expressions
 
                 return Body.Evaluate(innerEnv);
             }
+            // The body expression is anything else than a function call expression
             else
             {
                 return Body.Evaluate(env);
