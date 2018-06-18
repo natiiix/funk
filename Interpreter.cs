@@ -204,10 +204,17 @@ namespace Funk
             #region batch
             rootEnv.Symbols["batch"] = new BuiltInFunction((env, args) =>
             {
-                // Return the last evaluated expression passed to the function
-                // or void expression is no argument was provided
-                return args.LastOrDefault() ?? new VoidExpression();
-            });
+                // Evaluate the expressions one by one and return
+                // the expression obtained by evaluating the last expression
+                IExpression returnValue = new VoidExpression();
+
+                foreach (IExpression expr in args)
+                {
+                    returnValue = expr.Evaluate(env);
+                }
+
+                return returnValue;
+            }, false);
             #endregion
 
             #region if
@@ -222,7 +229,7 @@ namespace Funk
                     int baseIdx = i * 2;
 
                     // Try to convert the condition expression to a numeric value
-                    NumberExpression condition = args.ElementAt(baseIdx) as NumberExpression;
+                    NumberExpression condition = args.ElementAt(baseIdx).Evaluate(env) as NumberExpression;
 
                     // Unable to convert the condition to a number expression
                     if (condition == null)
@@ -234,21 +241,21 @@ namespace Funk
                     if (condition.BooleanValue)
                     {
                         // Return the expression supplied as the next argument
-                        return args.ElementAt(baseIdx + 1);
+                        return args.ElementAt(baseIdx + 1).Evaluate(env);
                     }
                 }
 
                 // Final else statement
                 if (argCount % 2 == 1)
                 {
-                    return args.ElementAt(argCount - 1);
+                    return args.ElementAt(argCount - 1).Evaluate(env);
                 }
                 // No condition met
                 else
                 {
                     return new VoidExpression();
                 }
-            });
+            }, false);
             #endregion
 
             #region not
